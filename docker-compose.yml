@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8002:8002"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+    command: sh -c "uvicorn main:app --host 0.0.0.0 --port 8002 & celery -A celery_config.celery_app worker --loglevel=info"
+
+  redis:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
